@@ -13,47 +13,24 @@ jobs:
         with:
           python-version: '3.10'
       
-      - name: Install system deps + SDK licenses
+      - name: Install system deps
         run: |
           sudo apt-get update
           sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5 libncurses-dev libtinfo5 cmake libffi-dev libssl-dev
-          
-          # Accept Android SDK licenses automatically
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null
-          
-          # Install build-tools 37.0.0 for AIDL
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;37.0.0" "platform-tools" "platforms;android-31"
 
-      - name: Install NDK 25b
+      - name: Setup Android SDK + Licenses
         run: |
-          mkdir -p $HOME/.buildozer/android/platform
-          cd $HOME/.buildozer/android/platform
-          wget -q https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
-          unzip -q android-ndk-r25b-linux.zip
-          rm android-ndk-r25b-linux.zip
-
-      - name: Install Buildozer
-        run: |
-          pip install --upgrade pip setuptools wheel
-          pip install buildozer==1.5.0 cython
-
-      - name: Build APK
-        run: buildozer -v android debug
-
-      - name: Upload APK
-        uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-      - name: Install system deps + SDK licenses
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5 libncurses-dev libtinfo5 cmake libffi-dev libssl-dev
+          # Install cmdline-tools first
+          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
+          cd $ANDROID_SDK_ROOT/cmdline-tools
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip -q commandlinetools-linux-11076708_latest.zip
+          mv cmdline-tools latest
           
-          # Accept Android SDK licenses automatically
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null
+          # Now accept licenses
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
           
-          # Install build-tools 37.0.0 for AIDL
+          # Install build-tools 37 + platform 31
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;37.0.0" "platform-tools" "platforms;android-31"
 
       - name: Install NDK 25b
