@@ -8,7 +8,6 @@ version = 0.1
 requirements = python3,kivy==2.3.1,cython,sdl2,setuptools,meson,ninja
 orientation = portrait
 fullscreen = 1
-icon.filename = logo.png
 android.archs = arm64-v8a
 android.api = 31
 android.minapi = 21
