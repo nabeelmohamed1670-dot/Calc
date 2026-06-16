@@ -5,7 +5,7 @@ package.domain = org.nabeel
 source.dir =.
 source.include_exts = py,kv,png,jpg,jpeg
 version = 0.1
-requirements = python3==3.10,kivy==2.3.1,cython,sdl2,setuptools,meson,ninja
+requirements = python3,kivy==2.3.1,cython,sdl2,setuptools,meson,ninja
 orientation = portrait
 fullscreen = 1
 android.archs = arm64-v8a
