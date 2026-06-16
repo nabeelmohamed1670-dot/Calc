@@ -12,10 +12,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - name: Install system deps
+      
+      - name: Install system deps + SDK licenses
         run: |
           sudo apt-get update
           sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5 libncurses-dev libtinfo5 cmake libffi-dev libssl-dev
+          
+          # Accept Android SDK licenses automatically
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null
+          
+          # Install build-tools 37.0.0 for AIDL
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;37.0.0" "platform-tools" "platforms;android-31"
+
       - name: Install NDK 25b
         run: |
           mkdir -p $HOME/.buildozer/android/platform
@@ -23,12 +31,47 @@ jobs:
           wget -q https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
           unzip -q android-ndk-r25b-linux.zip
           rm android-ndk-r25b-linux.zip
+
       - name: Install Buildozer
         run: |
           pip install --upgrade pip setuptools wheel
           pip install buildozer==1.5.0 cython
+
       - name: Build APK
         run: buildozer -v android debug
+
+      - name: Upload APK
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install system deps + SDK licenses
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5 libncurses-dev libtinfo5 cmake libffi-dev libssl-dev
+          
+          # Accept Android SDK licenses automatically
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null
+          
+          # Install build-tools 37.0.0 for AIDL
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;37.0.0" "platform-tools" "platforms;android-31"
+
+      - name: Install NDK 25b
+        run: |
+          mkdir -p $HOME/.buildozer/android/platform
+          cd $HOME/.buildozer/android/platform
+          wget -q https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
+          unzip -q android-ndk-r25b-linux.zip
+          rm android-ndk-r25b-linux.zip
+
+      - name: Install Buildozer
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install buildozer==1.5.0 cython
+
+      - name: Build APK
+        run: buildozer -v android debug
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
