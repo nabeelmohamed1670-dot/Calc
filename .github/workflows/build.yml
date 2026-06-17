@@ -7,10 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    env:
-      ANDROID_NDK_HOME: /home/runner/.buildozer/android/platform/android-ndk-r25b
-      ANDROID_NDK_ROOT: /home/runner/.buildozer/android/platform/android-ndk-r25b
-      P4A_HOSTPYTHON3_VERSION: 3.11.9
 
     steps:
       - uses: actions/checkout@v4
@@ -42,6 +38,10 @@ jobs:
         run: rm -rf.buildozer
 
       - name: Build APK
+        env:
+          ANDROID_NDK_HOME: /home/runner/.buildozer/android/platform/android-ndk-r25b
+          ANDROID_NDK_ROOT: /home/runner/.buildozer/android/platform/android-ndk-r25b
+          P4A_HOSTPYTHON3_VERSION: 3.11.9
         run: yes | buildozer -v android debug
 
       - name: Upload APK
